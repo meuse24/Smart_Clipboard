@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -16,14 +18,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smartclipboardmanager.R
+import com.smartclipboardmanager.domain.model.ClipContentType
 import com.smartclipboardmanager.domain.model.ClipboardEntry
+import com.smartclipboardmanager.ui.components.ColorSwatch
+import com.smartclipboardmanager.ui.components.ImageFull
 import com.smartclipboardmanager.ui.components.QuickActionsRow
 import com.smartclipboardmanager.ui.theme.AppSpacing
 import com.smartclipboardmanager.ui.viewmodel.DetailViewModel
@@ -38,9 +43,7 @@ fun DetailRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     if (uiState.deleted) {
-        LaunchedEffect(Unit) {
-            onBack()
-        }
+        LaunchedEffect(Unit) { onBack() }
     }
     DetailScreen(
         entry = uiState.entry,
@@ -89,11 +92,28 @@ fun DetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .verticalScroll(rememberScrollState())
                 .padding(AppSpacing.l),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.m)
         ) {
+            // ── Type-specific media preview ──────────────────────────────
+            when (entry.contentType) {
+                ClipContentType.IMAGE -> {
+                    ImageFull(mediaUri = entry.mediaUri)
+                }
+                ClipContentType.COLOR -> {
+                    ColorSwatch(colorString = entry.content)
+                }
+                else -> Unit
+            }
+
+            // ── Content section ──────────────────────────────────────────
             Text(stringResource(R.string.detail_section_content), style = MaterialTheme.typography.titleMedium)
             Text(entry.content, style = MaterialTheme.typography.bodyLarge)
+
+            // ── Metadata ─────────────────────────────────────────────────
+            Text(stringResource(R.string.detail_section_type), style = MaterialTheme.typography.titleMedium)
+            Text(entry.contentType.name, style = MaterialTheme.typography.bodyMedium)
 
             Text(stringResource(R.string.detail_section_source), style = MaterialTheme.typography.titleMedium)
             Text(entry.sourceApp ?: stringResource(R.string.unknown_source), style = MaterialTheme.typography.bodyMedium)
@@ -101,18 +121,18 @@ fun DetailScreen(
             Text(stringResource(R.string.detail_section_captured_at), style = MaterialTheme.typography.titleMedium)
             Text(formatTimestamp(entry.createdAtMillis), style = MaterialTheme.typography.bodyMedium)
 
-            Text(stringResource(R.string.detail_section_type), style = MaterialTheme.typography.titleMedium)
-            Text(entry.contentType.name, style = MaterialTheme.typography.bodyMedium)
-
             if (entry.isSensitive) {
                 Text(stringResource(R.string.detail_sensitive_marker), style = MaterialTheme.typography.bodyMedium)
             }
 
+            // ── Quick actions ─────────────────────────────────────────────
             QuickActionsRow(
                 content = entry.content,
-                contentType = entry.contentType
+                contentType = entry.contentType,
+                mediaUri = entry.mediaUri
             )
 
+            // ── Entry actions ─────────────────────────────────────────────
             Button(onClick = onTogglePinned, modifier = Modifier.fillMaxWidth()) {
                 Text(
                     if (entry.isPinned) stringResource(R.string.unpin_entry)

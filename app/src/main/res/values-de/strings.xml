@@ -1,0 +1,107 @@
+<resources>
+    <string name="app_name">Smart Clipboard Manager</string>
+
+    <string name="home_title">M24 Smart Clipboard</string>
+    <string name="nav_home">Start</string>
+    <string name="history_title">Verlauf</string>
+    <string name="detail_title">Details</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="help_title">Hilfe</string>
+    <string name="info_title">Info</string>
+    <string name="menu_title">Menü</string>
+    <string name="drawer_subtitle">Navigation und App-Bereiche</string>
+    <string name="drawer_navigation_section">Navigation</string>
+    <string name="drawer_item_manage">Verwalten</string>
+    <string name="drawer_item_guide">Anleitung</string>
+    <string name="drawer_item_about">Info</string>
+
+    <string name="empty_history">Noch keine Einträge vorhanden.</string>
+    <string name="search_history_label">Verlauf durchsuchen</string>
+    <string name="recent_entries_title">Letzte Einträge</string>
+
+    <string name="settings_action">Einstellungen</string>
+    <string name="back_action">Zurück</string>
+
+    <string name="import_description">Importiere den aktuellen Inhalt der Zwischenablage und sieh dir deine letzten Einträge an.</string>
+    <string name="import_clipboard_now">Jetzt importieren</string>
+    <string name="open_full_history">Vollständigen Verlauf öffnen</string>
+
+    <string name="unknown_source">Unbekannte Quelle</string>
+    <string name="entry_not_found">Eintrag nicht gefunden</string>
+
+    <string name="detail_section_content">Inhalt</string>
+    <string name="detail_section_source">Quelle</string>
+    <string name="detail_section_captured_at">Erfasst am</string>
+    <string name="detail_section_type">Typ</string>
+    <string name="detail_sensitive_marker">Als sensibel markiert</string>
+    <string name="unpin_entry">Anheften aufheben</string>
+    <string name="pin_entry">Eintrag anheften</string>
+    <string name="delete_entry">Eintrag löschen</string>
+
+    <string name="badge_pinned">[Angeheftet] </string>
+    <string name="badge_sensitive">[Sensibel] </string>
+
+    <string name="section_appearance">Darstellung</string>
+    <string name="section_privacy">Datenschutz</string>
+    <string name="section_storage">Speicher</string>
+    <string name="section_about">Info &amp; Hilfe</string>
+    <string name="dark_theme">Dunkles Design</string>
+    <string name="persist_otp_entries">OTP-Einträge speichern</string>
+    <string name="hide_sensitive_preview">Vorschau sensibler Inhalte verbergen</string>
+    <string name="history_limit">Verlaufslimit: %1$d</string>
+    <string name="retention_days">Aufbewahrung (Tage): %1$d</string>
+
+    <string name="hero_title">Zwischenablage erfassen</string>
+    <string name="copied_to_clipboard">In Zwischenablage kopiert</string>
+    <string name="action_copy">Kopieren</string>
+    <string name="action_share">Teilen</string>
+
+    <string name="quick_import_tile_label">Zwischenablage-Import</string>
+    <string name="clipboard_empty">Zwischenablage ist leer.</string>
+    <string name="imported_clipboard">Zwischenablage importiert.</string>
+    <string name="import_media_failed">Medieninhalt konnte nicht importiert werden.</string>
+    <string name="imported_shared_text">Geteilter Text importiert.</string>
+    <string name="imported_processed_text">Ausgewählter Text importiert.</string>
+    <string name="source_shared_text">Geteilter Text</string>
+    <string name="source_process_text">Textverarbeitung</string>
+    <string name="source_clipboard">Zwischenablage</string>
+
+    <string name="quick_action_open">Öffnen</string>
+    <string name="quick_action_call">Anrufen</string>
+    <string name="quick_action_email">E-Mail</string>
+    <string name="quick_action_open_maps">In Karte öffnen</string>
+    <string name="quick_action_open_file">Datei öffnen</string>
+    <string name="quick_action_error_url">URL kann nicht geöffnet werden</string>
+    <string name="quick_action_error_dialer">Wählhilfe kann nicht geöffnet werden</string>
+    <string name="quick_action_error_email">E-Mail-App kann nicht geöffnet werden</string>
+    <string name="quick_action_error_maps">Karte kann nicht geöffnet werden</string>
+    <string name="quick_action_error_file">Datei kann nicht geöffnet werden</string>
+
+    <string name="help_section_getting_started_title">Erste Schritte</string>
+    <string name="help_section_getting_started_body">Nutze den Start-Tab, um den aktuellen Zwischenablage-Inhalt zu importieren. Wechsle über die untere Navigation zum Verlauf, um Einträge zu prüfen, zu durchsuchen und wiederzuverwenden.</string>
+    <string name="help_section_import_title">Aktiver Import</string>
+    <string name="help_section_import_body">Tippe auf „Jetzt importieren", um den aktuellen Inhalt der Zwischenablage zu lesen. Das Verhalten bleibt damit explizit und nachvollziehbar.</string>
+    <string name="help_section_history_title">Verlauf</string>
+    <string name="help_section_history_body">Der Verlauf speichert Einträge lokal. Verwende die Suche, um nach Inhalt, Quell-App oder erkanntem Typ zu filtern.</string>
+    <string name="help_section_content_types_title">Unterstützte Inhaltstypen</string>
+    <string name="help_section_content_types_body">Die App erkennt und verarbeitet: URLs, Telefonnummern, E-Mail-Adressen, OTP-Codes, IBANs, JSON, Code-Fragmente, Farben (Hex / RGB / HSL), Geo-Koordinaten, Bilder, Dateien und einfachen Text.</string>
+    <string name="help_section_quick_actions_title">Schnellaktionen</string>
+    <string name="help_section_quick_actions_body">Erkannte Typen erhalten direkte Aktionen in Verlauf und Details: URLs im Browser öffnen, Nummern wählen, E-Mails verfassen, Geo-Koordinaten in der Karte öffnen, lokale Dateien öffnen sowie Bilder und Farbvorschauen anzeigen.</string>
+    <string name="help_section_privacy_title">Datenschutz</string>
+    <string name="help_section_privacy_body">Sensible Inhalte können in Vorschauen maskiert werden. OTP-Einträge werden standardmäßig nicht gespeichert. Die Aufbewahrungseinstellungen steuern die automatische Bereinigung alter Einträge einschließlich zugehöriger Mediendateien.</string>
+    <string name="help_section_settings_title">Einstellungen</string>
+    <string name="help_section_settings_body">Öffne die Einstellungen über die untere Navigation, um Darstellung, Datenschutzverhalten, Verlaufsgröße und Aufbewahrungsdauer zu konfigurieren.</string>
+    <string name="help_section_tile_title">Schnelleinstellungs-Kachel</string>
+    <string name="help_section_tile_body">Du kannst die Schnelleinstellungs-Kachel der App hinzufügen und einen schnellen Import direkt aus der Systemleiste auslösen.</string>
+    <string name="help_section_troubleshooting_title">Fehlersuche</string>
+    <string name="help_section_troubleshooting_body">Falls Importe nicht erscheinen, stelle sicher, dass die Zwischenablage Inhalt enthält, und importiere erneut über den Start-Tab. Prüfe außerdem die Aufbewahrungseinstellungen. Medien-Importe erfordern eine Bild- oder Datei-URI in der Zwischenablage.</string>
+
+    <string name="info_section_legal_title">Rechtliches</string>
+    <string name="info_section_legal_body">(C) %1$d Günther Meusburger\nLizenziert unter der MIT License.</string>
+    <string name="info_section_stack_title">Tech-Stack</string>
+    <string name="info_section_stack_body">Android-App mit Kotlin, Jetpack Compose (Material 3), Navigation Compose, Room, DataStore, Hilt Dependency Injection und Coil für das Laden von Bildern.</string>
+    <string name="info_section_libraries_title">Bibliotheken</string>
+    <string name="info_section_libraries_body">Core AndroidX, Lifecycle, Activity Compose, Navigation Compose, Room, DataStore Preferences, Hilt Android, Hilt Navigation Compose, Coil Compose, JUnit und Compose UI-Test-Abhängigkeiten.</string>
+    <string name="info_section_credits_title">Credits</string>
+    <string name="info_section_credits_body">CLI-Entwicklungsunterstützung: Codex, Claude Code und Gemini.</string>
+</resources>

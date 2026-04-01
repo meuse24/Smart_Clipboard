@@ -40,7 +40,8 @@ class ImportClipboardContentUseCase @Inject constructor(
             sourceApp = input.sourceApp,
             capturedAtMillis = input.capturedAtMillis,
             contentType = classification.primaryType,
-            isSensitive = isSensitive
+            isSensitive = isSensitive,
+            mediaUri = input.mediaUri
         )
 
         return ImportResult.Imported(

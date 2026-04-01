@@ -2,17 +2,22 @@ package com.smartclipboardmanager.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.smartclipboardmanager.domain.model.ClipContentType
 import com.smartclipboardmanager.domain.model.ClipboardImportInput
 import com.smartclipboardmanager.domain.privacy.SensitiveContentRedactor
 import com.smartclipboardmanager.domain.repository.ClipboardRepository
 import com.smartclipboardmanager.domain.repository.SettingsRepository
 import com.smartclipboardmanager.domain.usecase.CleanupOldEntriesUseCase
 import com.smartclipboardmanager.domain.usecase.ImportClipboardContentUseCase
+import com.smartclipboardmanager.domain.usecase.ImportMediaContentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -23,7 +28,9 @@ data class HomeEntryUiModel(
     val sourceApp: String?,
     val createdAtMillis: Long,
     val typeLabel: String,
-    val isSensitive: Boolean
+    val contentType: ClipContentType,
+    val isSensitive: Boolean,
+    val mediaUri: String?
 )
 
 data class HomeUiState(
@@ -37,11 +44,15 @@ class HomeViewModel @Inject constructor(
     private val clipboardRepository: ClipboardRepository,
     settingsRepository: SettingsRepository,
     private val importClipboardContentUseCase: ImportClipboardContentUseCase,
+    private val importMediaContentUseCase: ImportMediaContentUseCase,
     private val cleanupOldEntriesUseCase: CleanupOldEntriesUseCase,
     private val sensitiveContentRedactor: SensitiveContentRedactor
 ) : ViewModel() {
 
     private val loadingState = MutableStateFlow(true)
+
+    private val _mediaImportResult = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
+    val mediaImportResult: SharedFlow<Boolean> = _mediaImportResult.asSharedFlow()
 
     val uiState: StateFlow<HomeUiState> = combine(
         clipboardRepository.observeRecentEntries(limit = 5),
@@ -61,7 +72,9 @@ class HomeViewModel @Inject constructor(
                     sourceApp = it.sourceApp,
                     createdAtMillis = it.createdAtMillis,
                     typeLabel = it.contentType.name,
-                    isSensitive = it.isSensitive
+                    contentType = it.contentType,
+                    isSensitive = it.isSensitive,
+                    mediaUri = it.mediaUri
                 )
             },
             isDarkTheme = settings.isDarkTheme,
@@ -75,27 +88,6 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            if (clipboardRepository.countEntries() == 0) {
-                importClipboardContentUseCase(
-                    ClipboardImportInput(
-                        content = "ssh user@server 'sudo systemctl restart app'",
-                        sourceApp = "Terminal"
-                    )
-                )
-                importClipboardContentUseCase(
-                    ClipboardImportInput(
-                        content = "https://developer.android.com/topic/architecture",
-                        sourceApp = "Chrome"
-                    )
-                )
-                importClipboardContentUseCase(
-                    ClipboardImportInput(
-                        content = "Weekly sync moved to 14:30 CET",
-                        sourceApp = "Slack"
-                    )
-                )
-            }
-
             cleanupOldEntriesUseCase()
             loadingState.value = false
         }
@@ -107,6 +99,14 @@ class HomeViewModel @Inject constructor(
                 ClipboardImportInput(content = content, sourceApp = sourceApp)
             )
             cleanupOldEntriesUseCase()
+        }
+    }
+
+    fun importMediaContent(uriString: String, mimeType: String, sourceApp: String?) {
+        viewModelScope.launch {
+            val success = importMediaContentUseCase(uriString, mimeType, sourceApp)
+            _mediaImportResult.tryEmit(success)
+            if (success) cleanupOldEntriesUseCase()
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.smartclipboardmanager
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
@@ -26,8 +27,10 @@ class QuickImportTileService : TileService() {
             )
             startActivityAndCollapse(pendingIntent)
         } else {
+            @SuppressLint("StartActivityAndCollapseDeprecated")
             @Suppress("DEPRECATION")
-            startActivityAndCollapse(launchIntent)
+            fun collapse() = startActivityAndCollapse(launchIntent)
+            collapse()
         }
     }
 }

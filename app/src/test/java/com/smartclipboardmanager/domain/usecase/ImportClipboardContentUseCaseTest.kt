@@ -7,6 +7,7 @@ import com.smartclipboardmanager.domain.model.ClipContentType
 import com.smartclipboardmanager.domain.model.ClipboardEntry
 import com.smartclipboardmanager.domain.model.ClipboardImportInput
 import com.smartclipboardmanager.domain.privacy.SensitiveContentPolicy
+import com.smartclipboardmanager.domain.media.MediaDeleter
 import com.smartclipboardmanager.domain.repository.ClipboardRepository
 import com.smartclipboardmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
@@ -121,7 +122,8 @@ class ImportClipboardContentUseCaseTest {
 
         val cleanupUseCase = CleanupOldEntriesUseCase(
             clipboardRepository = clipboardRepository,
-            settingsRepository = settingsRepository
+            settingsRepository = settingsRepository,
+            mediaDeleter = object : MediaDeleter { override fun deleteFile(path: String) {} }
         )
 
         cleanupUseCase(nowMillis = now)
@@ -189,6 +191,11 @@ private class InMemoryClipboardRepository(
         }
     }
 
+    override suspend fun deleteEntry(id: Long) {
+        entries.removeAll { it.id == id }
+        flow.value = entries.sortedByDescending { it.createdAtMillis }
+    }
+
     override suspend fun countEntries(): Int = entries.size
 
     override suspend fun importEntry(
@@ -196,7 +203,8 @@ private class InMemoryClipboardRepository(
         sourceApp: String?,
         capturedAtMillis: Long,
         contentType: ClipContentType,
-        isSensitive: Boolean
+        isSensitive: Boolean,
+        mediaUri: String?
     ) {
         entries.add(
             ClipboardEntry(
@@ -206,15 +214,18 @@ private class InMemoryClipboardRepository(
                 createdAtMillis = capturedAtMillis,
                 isPinned = false,
                 contentType = contentType,
-                isSensitive = isSensitive
+                isSensitive = isSensitive,
+                mediaUri = mediaUri
             )
         )
         flow.value = entries.sortedByDescending { it.createdAtMillis }
     }
 
-    override suspend fun deleteOlderThan(thresholdMillis: Long) {
+    override suspend fun deleteOlderThan(thresholdMillis: Long): List<String> {
+        val removed = entries.filter { it.createdAtMillis < thresholdMillis }
         entries.removeAll { it.createdAtMillis < thresholdMillis }
         flow.value = entries.sortedByDescending { it.createdAtMillis }
+        return removed.mapNotNull { it.mediaUri }
     }
 
     override suspend fun seedDemoDataIfEmpty() {
@@ -224,7 +235,8 @@ private class InMemoryClipboardRepository(
                 sourceApp = "demo",
                 capturedAtMillis = System.currentTimeMillis(),
                 contentType = ClipContentType.PLAIN_TEXT,
-                isSensitive = false
+                isSensitive = false,
+                mediaUri = null
             )
         }
     }

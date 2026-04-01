@@ -1,4 +1,4 @@
-# Smart Clipboard Manager
+# M24 Smart Clipboard
 
 SmartClipboardManager is a local-first Android clipboard assistant built with Kotlin and Jetpack Compose.
 
@@ -13,21 +13,20 @@ SmartClipboardManager is a local-first Android clipboard assistant built with Ko
   - OTP
   - JSON
   - IBAN
+  - Color (Hex / RGB / HSL)
+  - Geo coordinates (decimal degrees)
+  - Image (copied from any app)
+  - File
   - Multiline text
-  - Possible code snippet
-- Quick actions per type (open URL, call number, compose e-mail)
+  - Code snippet
+- Quick actions per type: open URL, call number, compose e-mail, open Maps, open file, image / color preview
 - Privacy-first behavior:
   - Sensitive content marking
   - OTP not persisted by default
   - Sensitive preview masking
-  - Retention-based auto-cleanup
-- UI screens:
-  - Home
-  - History
-  - Detail
-  - Settings
-  - Help
-  - Info
+  - Retention-based auto-cleanup (including media files)
+- Modern UI with bottom navigation (Home · History · Settings)
+- UI screens: Home, History, Detail, Settings, Help, Info
 - Quick Settings Tile entry point
 - Share / Process Text integration
 
@@ -40,15 +39,16 @@ SmartClipboardManager is a local-first Android clipboard assistant built with Ko
 - Room (local database)
 - DataStore Preferences (settings)
 - Coroutines + Flow
+- Coil (image loading)
 
 ## Architecture
 
-Version 1 uses a lean, package-based architecture inside a single `app` module:
+Package-based clean architecture inside a single `app` module:
 
-- `domain/*`
-- `data/*`
-- `ui/*`
-- `di/*`
+- `domain/*` — models, use cases, repository interfaces
+- `data/*` — Room DAO/entities, repository implementations, media helpers
+- `ui/*` — Compose screens, ViewModels, navigation
+- `di/*` — Hilt modules
 
 ## Build
 
@@ -62,13 +62,17 @@ Version 1 uses a lean, package-based architecture inside a single `app` module:
 
 ```bash
 ./gradlew assembleDebug
+./gradlew testDebugUnitTest
+./gradlew lintDebug
 ./gradlew installDebug
 ```
 
-Windows PowerShell:
+Windows:
 
 ```powershell
 .\gradlew.bat assembleDebug
+.\gradlew.bat testDebugUnitTest
+.\gradlew.bat lintDebug
 .\gradlew.bat installDebug
 ```
 
@@ -76,8 +80,7 @@ Windows PowerShell:
 
 1. Enable Developer Options + USB debugging.
 2. Connect device via USB.
-3. Install debug build:
-   - `./gradlew installDebug`
+3. Install debug build: `./gradlew installDebug`
 4. Launch app from launcher.
 
 ## License
@@ -88,8 +91,4 @@ MIT License
 
 ## Credits
 
-CLI development support tools:
-
-- Codex
-- Claude Code
-- Gemini
+CLI development support: Codex, Claude Code, Gemini

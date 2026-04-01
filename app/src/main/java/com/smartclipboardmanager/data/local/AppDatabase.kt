@@ -7,7 +7,7 @@ import com.smartclipboardmanager.data.local.entity.ClipboardEntryEntity
 
 @Database(
     entities = [ClipboardEntryEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -1,13 +1,19 @@
 <resources>
     <string name="app_name">Smart Clipboard Manager</string>
 
-    <string name="home_title">Smart Clipboard</string>
+    <string name="home_title">M24 Smart Clipboard</string>
+    <string name="nav_home">Home</string>
     <string name="history_title">History</string>
     <string name="detail_title">Detail</string>
     <string name="settings_title">Settings</string>
     <string name="help_title">Help</string>
     <string name="info_title">Info</string>
     <string name="menu_title">Menu</string>
+    <string name="drawer_subtitle">Navigation and app sections</string>
+    <string name="drawer_navigation_section">Navigation</string>
+    <string name="drawer_item_manage">Manage</string>
+    <string name="drawer_item_guide">Guide</string>
+    <string name="drawer_item_about">About</string>
 
     <string name="empty_history">No clipboard entries yet.</string>
     <string name="search_history_label">Search history</string>
@@ -16,7 +22,7 @@
     <string name="settings_action">Settings</string>
     <string name="back_action">Back</string>
 
-    <string name="import_description">Import current clipboard content manually and view your latest entries.</string>
+    <string name="import_description">Import your current clipboard content and view your latest entries.</string>
     <string name="import_clipboard_now">Import Clipboard Now</string>
     <string name="open_full_history">Open Full History</string>
 
@@ -38,48 +44,64 @@
     <string name="section_appearance">Appearance</string>
     <string name="section_privacy">Privacy</string>
     <string name="section_storage">Storage</string>
+    <string name="section_about">About &amp; Help</string>
     <string name="dark_theme">Dark Theme</string>
     <string name="persist_otp_entries">Persist OTP Entries</string>
     <string name="hide_sensitive_preview">Hide Sensitive Preview</string>
     <string name="history_limit">History limit: %1$d</string>
     <string name="retention_days">Retention (days): %1$d</string>
 
+    <string name="hero_title">Capture your clipboard</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="action_copy">Copy</string>
+    <string name="action_share">Share</string>
+
     <string name="quick_import_tile_label">Clipboard Import</string>
     <string name="clipboard_empty">Clipboard is empty.</string>
     <string name="imported_clipboard">Clipboard imported.</string>
+    <string name="import_media_failed">Could not import media from clipboard.</string>
     <string name="imported_shared_text">Shared text imported.</string>
     <string name="imported_processed_text">Selected text imported.</string>
+    <string name="source_shared_text">Shared Text</string>
+    <string name="source_process_text">Process Text</string>
+    <string name="source_clipboard">Clipboard</string>
 
     <string name="quick_action_open">Open</string>
     <string name="quick_action_call">Call</string>
     <string name="quick_action_email">Email</string>
+    <string name="quick_action_open_maps">Open in Maps</string>
+    <string name="quick_action_open_file">Open File</string>
     <string name="quick_action_error_url">Cannot open URL</string>
     <string name="quick_action_error_dialer">Cannot open dialer</string>
     <string name="quick_action_error_email">Cannot open email app</string>
+    <string name="quick_action_error_maps">Cannot open Maps</string>
+    <string name="quick_action_error_file">Cannot open file</string>
 
     <string name="help_section_getting_started_title">Getting Started</string>
-    <string name="help_section_getting_started_body">Use the home screen to actively import your current clipboard content. Then open History to inspect, search and reuse entries.</string>
+    <string name="help_section_getting_started_body">Use the Home tab to import your current clipboard content. Switch to History via the bottom navigation to inspect, search and reuse entries.</string>
     <string name="help_section_import_title">Active Import</string>
     <string name="help_section_import_body">Tap "Import Clipboard Now" to read the current clipboard while the app is in the foreground. This keeps the behavior explicit and predictable.</string>
     <string name="help_section_history_title">History</string>
-    <string name="help_section_history_body">History stores entries locally in Room. Use the search field to filter by content, source app or detected type.</string>
+    <string name="help_section_history_body">History stores entries locally. Use the search field to filter by content, source app or detected type.</string>
+    <string name="help_section_content_types_title">Supported Content Types</string>
+    <string name="help_section_content_types_body">The app recognizes and handles: URLs, Phone Numbers, E-Mail addresses, OTP codes, IBANs, JSON, Code Snippets, Colors (hex / rgb / hsl), Geo Coordinates, Images, Files and plain text.</string>
     <string name="help_section_quick_actions_title">Quick Actions</string>
-    <string name="help_section_quick_actions_body">For recognized types, actions are shown directly in History and Detail: open URLs, dial phone numbers and compose emails.</string>
+    <string name="help_section_quick_actions_body">Recognized types get direct actions in History and Detail: open URLs in the browser, dial numbers, compose emails, open geo coordinates in Maps, open local files and preview images or color swatches.</string>
     <string name="help_section_privacy_title">Privacy</string>
-    <string name="help_section_privacy_body">Sensitive content can be masked in previews. OTP entries are not persisted by default. Retention settings control automatic cleanup of older entries.</string>
+    <string name="help_section_privacy_body">Sensitive content can be masked in previews. OTP entries are not persisted by default. Retention settings control automatic cleanup of older entries including their media files.</string>
     <string name="help_section_settings_title">Settings</string>
-    <string name="help_section_settings_body">Open Settings from the menu to configure appearance, privacy behavior, history size and retention period.</string>
+    <string name="help_section_settings_body">Open Settings via the bottom navigation to configure appearance, privacy behavior, history size and retention period.</string>
     <string name="help_section_tile_title">Quick Settings Tile</string>
-    <string name="help_section_tile_body">You can add the app’s Quick Settings tile and trigger a fast import from the system shade.</string>
+    <string name="help_section_tile_body">You can add the app\'s Quick Settings tile and trigger a fast import from the system shade.</string>
     <string name="help_section_troubleshooting_title">Troubleshooting</string>
-    <string name="help_section_troubleshooting_body">If imports do not appear, ensure clipboard has text content, then import again from Home. Also verify retention settings are not too aggressive.</string>
+    <string name="help_section_troubleshooting_body">If imports do not appear, ensure the clipboard has content, then import again from the Home tab. Check that retention settings are not too aggressive. Media imports require the clipboard to hold an image or file URI.</string>
 
     <string name="info_section_legal_title">Legal</string>
     <string name="info_section_legal_body">(C) %1$d Günther Meusburger\nLicensed under the MIT License.</string>
     <string name="info_section_stack_title">Tech Stack</string>
-    <string name="info_section_stack_body">Android app built with Kotlin, Jetpack Compose (Material 3), Navigation Compose, Room, DataStore and Hilt dependency injection.</string>
+    <string name="info_section_stack_body">Android app built with Kotlin, Jetpack Compose (Material 3), Navigation Compose, Room, DataStore, Hilt dependency injection and Coil for image loading.</string>
     <string name="info_section_libraries_title">Libraries</string>
-    <string name="info_section_libraries_body">Core AndroidX, Lifecycle, Activity Compose, Navigation Compose, Room, DataStore Preferences, Hilt Android, Hilt Navigation Compose, JUnit and Compose UI test dependencies.</string>
+    <string name="info_section_libraries_body">Core AndroidX, Lifecycle, Activity Compose, Navigation Compose, Room, DataStore Preferences, Hilt Android, Hilt Navigation Compose, Coil Compose, JUnit and Compose UI test dependencies.</string>
     <string name="info_section_credits_title">Credits</string>
     <string name="info_section_credits_body">CLI development support and productivity credits: Codex, Claude Code and Gemini.</string>
 </resources>

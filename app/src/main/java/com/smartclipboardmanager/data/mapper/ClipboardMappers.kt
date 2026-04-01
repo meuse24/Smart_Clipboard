@@ -11,7 +11,8 @@ fun ClipboardEntryEntity.toDomain(): ClipboardEntry = ClipboardEntry(
     createdAtMillis = createdAtMillis,
     isPinned = isPinned,
     contentType = contentType.toClipContentType(),
-    isSensitive = isSensitive
+    isSensitive = isSensitive,
+    mediaUri = mediaUri
 )
 
 fun ClipboardEntry.toEntity(): ClipboardEntryEntity = ClipboardEntryEntity(
@@ -21,7 +22,8 @@ fun ClipboardEntry.toEntity(): ClipboardEntryEntity = ClipboardEntryEntity(
     createdAtMillis = createdAtMillis,
     isPinned = isPinned,
     contentType = contentType.name,
-    isSensitive = isSensitive
+    isSensitive = isSensitive,
+    mediaUri = mediaUri
 )
 
 private fun String.toClipContentType(): ClipContentType {

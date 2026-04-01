@@ -37,7 +37,7 @@ class IbanRule : ClassificationRule {
 
     private fun isValidIbanChecksum(iban: String): Boolean {
         val rearranged = iban.drop(4) + iban.take(4)
-        var remainder = 0
+        var remainder = 0L
 
         for (char in rearranged) {
             val transformed = if (char.isLetter()) {
@@ -47,11 +47,11 @@ class IbanRule : ClassificationRule {
             }
 
             for (digit in transformed) {
-                remainder = (remainder * 10 + (digit - '0')) % 97
+                remainder = (remainder * 10L + (digit - '0').toLong()) % 97L
             }
         }
 
-        return remainder == 1
+        return remainder == 1L
     }
 }
 
@@ -137,6 +137,28 @@ class JsonRule : ClassificationRule {
     }
 }
 
+class ColorRule : ClassificationRule {
+    override val type: ClipContentType = ClipContentType.COLOR
+    override val priority: Int = 65
+
+    private val hexRegex = Regex(
+        "^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$"
+    )
+    private val rgbRegex = Regex(
+        "^rgba?\\(\\s*\\d{1,3}\\s*,\\s*\\d{1,3}\\s*,\\s*\\d{1,3}(\\s*,\\s*[\\d.]+)?\\s*\\)$",
+        RegexOption.IGNORE_CASE
+    )
+    private val hslRegex = Regex(
+        "^hsla?\\(\\s*\\d{1,3}\\s*,\\s*\\d{1,3}%\\s*,\\s*\\d{1,3}%(\\s*,\\s*[\\d.]+)?\\s*\\)$",
+        RegexOption.IGNORE_CASE
+    )
+
+    override fun matches(text: NormalizedClipboardText): Boolean {
+        val value = text.trimmed
+        return hexRegex.matches(value) || rgbRegex.matches(value) || hslRegex.matches(value)
+    }
+}
+
 class PhoneNumberRule : ClassificationRule {
     override val type: ClipContentType = ClipContentType.PHONE_NUMBER
     override val priority: Int = 50
@@ -151,6 +173,21 @@ class PhoneNumberRule : ClassificationRule {
 
         val digitCount = text.compactDigits.length
         return digitCount in 7..15
+    }
+}
+
+class GeoLocationRule : ClassificationRule {
+    override val type: ClipContentType = ClipContentType.GEO_LOCATION
+    override val priority: Int = 45
+
+    // Decimal degrees: 48.20849, 16.37208  or  48.20849,16.37208
+    private val decimalCoordsRegex = Regex(
+        "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?)\\s*,\\s*[-+]?(180(\\.0+)?|(1[0-7]\\d|\\d{1,2})(\\.\\d+)?)$"
+    )
+
+    override fun matches(text: NormalizedClipboardText): Boolean {
+        if (text.lineCount > 1) return false
+        return decimalCoordsRegex.matches(text.trimmed)
     }
 }
 

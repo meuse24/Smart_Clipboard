@@ -11,10 +11,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.smartclipboardmanager.ui.navigation.AppNavHost
 import com.smartclipboardmanager.ui.theme.SmartClipboardTheme
 import com.smartclipboardmanager.ui.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -32,6 +34,15 @@ class MainActivity : ComponentActivity() {
                 AppNavHost(
                     homeViewModel = homeViewModel,
                     onImportClipboardRequest = ::importFromClipboardInForeground
+                )
+            }
+        }
+
+        lifecycleScope.launch {
+            homeViewModel.mediaImportResult.collect { success ->
+                toast(
+                    if (success) getString(R.string.imported_clipboard)
+                    else getString(R.string.import_media_failed)
                 )
             }
         }
@@ -57,7 +68,10 @@ class MainActivity : ComponentActivity() {
             Intent.ACTION_SEND -> {
                 val text = intent.getStringExtra(Intent.EXTRA_TEXT)
                 if (!text.isNullOrBlank()) {
-                    homeViewModel.importClipboardContent(text, sourceApp = "Shared Text")
+                    homeViewModel.importClipboardContent(
+                        text,
+                        sourceApp = getString(R.string.source_shared_text)
+                    )
                     toast(getString(R.string.imported_shared_text))
                     handled = true
                 }
@@ -65,7 +79,10 @@ class MainActivity : ComponentActivity() {
             Intent.ACTION_PROCESS_TEXT -> {
                 val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString()
                 if (!text.isNullOrBlank()) {
-                    homeViewModel.importClipboardContent(text, sourceApp = "Process Text")
+                    homeViewModel.importClipboardContent(
+                        text,
+                        sourceApp = getString(R.string.source_process_text)
+                    )
                     toast(getString(R.string.imported_processed_text))
                     handled = true
                 }
@@ -81,20 +98,46 @@ class MainActivity : ComponentActivity() {
 
     private fun importFromClipboardInForeground() {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val text = clipboardManager.primaryClip
-            ?.takeIf { it.itemCount > 0 }
-            ?.getItemAt(0)
-            ?.coerceToText(this)
-            ?.toString()
-            ?.trim()
-
-        if (text.isNullOrBlank()) {
+        val clip = clipboardManager.primaryClip?.takeIf { it.itemCount > 0 } ?: run {
             toast(getString(R.string.clipboard_empty))
             return
         }
 
-        homeViewModel.importClipboardContent(text, sourceApp = "Clipboard")
-        toast(getString(R.string.imported_clipboard))
+        val item = clip.getItemAt(0)
+        val mimeType = (0 until clip.description.mimeTypeCount)
+            .map { clip.description.getMimeType(it) }
+            .firstOrNull()
+
+        when {
+            mimeType?.startsWith("image/") == true && item.uri != null -> {
+                homeViewModel.importMediaContent(
+                    uriString = item.uri.toString(),
+                    mimeType = mimeType,
+                    sourceApp = getString(R.string.source_clipboard)
+                )
+                // Toast wird via mediaImportResult-Flow gezeigt
+            }
+            item.uri != null && mimeType != null && !mimeType.startsWith("text/") -> {
+                homeViewModel.importMediaContent(
+                    uriString = item.uri.toString(),
+                    mimeType = mimeType,
+                    sourceApp = getString(R.string.source_clipboard)
+                )
+                // Toast wird via mediaImportResult-Flow gezeigt
+            }
+            else -> {
+                val text = item.coerceToText(this)?.toString()?.trim()
+                if (text.isNullOrBlank()) {
+                    toast(getString(R.string.clipboard_empty))
+                    return
+                }
+                homeViewModel.importClipboardContent(
+                    text,
+                    sourceApp = getString(R.string.source_clipboard)
+                )
+                toast(getString(R.string.imported_clipboard))
+            }
+        }
     }
 
     private fun toast(message: String) {

@@ -33,7 +33,7 @@ class SensitiveContentRedactor {
 
     private fun redactPhone(value: String): String {
         val digits = value.filter { it.isDigit() }
-        if (digits.length < 4) return "[hidden phone]"
+        if (digits.length < 7) return "[hidden phone]"
         return "***" + digits.takeLast(2)
     }
 }

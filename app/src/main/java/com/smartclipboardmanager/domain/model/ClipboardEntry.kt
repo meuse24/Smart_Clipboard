@@ -7,5 +7,6 @@ data class ClipboardEntry(
     val createdAtMillis: Long,
     val isPinned: Boolean,
     val contentType: ClipContentType,
-    val isSensitive: Boolean
+    val isSensitive: Boolean,
+    val mediaUri: String? = null
 )

@@ -12,5 +12,6 @@ data class ClipboardEntryEntity(
     val createdAtMillis: Long,
     val isPinned: Boolean,
     val contentType: String,
-    val isSensitive: Boolean
+    val isSensitive: Boolean,
+    val mediaUri: String? = null
 )

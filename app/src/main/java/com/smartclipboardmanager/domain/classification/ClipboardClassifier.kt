@@ -50,7 +50,9 @@ class ClipboardClassifier @Inject constructor(
             EmailRule(),
             UrlRule(),
             JsonRule(),
+            ColorRule(),
             PhoneNumberRule(),
+            GeoLocationRule(),
             CodeSnippetRule(),
             MultilineTextRule()
         )

@@ -53,7 +53,8 @@ class ClipboardRepositoryImpl @Inject constructor(
         sourceApp: String?,
         capturedAtMillis: Long,
         contentType: ClipContentType,
-        isSensitive: Boolean
+        isSensitive: Boolean,
+        mediaUri: String?
     ) {
         withContext(ioDispatcher) {
             dao.insert(
@@ -63,15 +64,16 @@ class ClipboardRepositoryImpl @Inject constructor(
                     createdAtMillis = capturedAtMillis,
                     isPinned = false,
                     contentType = contentType.name,
-                    isSensitive = isSensitive
+                    isSensitive = isSensitive,
+                    mediaUri = mediaUri
                 )
             )
         }
     }
 
-    override suspend fun deleteOlderThan(thresholdMillis: Long) {
-        withContext(ioDispatcher) {
-            dao.deleteOlderThan(thresholdMillis)
+    override suspend fun deleteOlderThan(thresholdMillis: Long): List<String> {
+        return withContext(ioDispatcher) {
+            dao.getMediaUrisAndDeleteOlderThan(thresholdMillis)
         }
     }
 

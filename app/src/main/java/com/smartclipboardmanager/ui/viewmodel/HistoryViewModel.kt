@@ -23,7 +23,8 @@ data class HistoryItemUiModel(
     val isPinned: Boolean,
     val typeLabel: String,
     val type: com.smartclipboardmanager.domain.model.ClipContentType,
-    val isSensitive: Boolean
+    val isSensitive: Boolean,
+    val mediaUri: String?
 )
 
 data class HistoryUiState(
@@ -74,7 +75,8 @@ class HistoryViewModel @Inject constructor(
                     isPinned = entry.isPinned,
                     typeLabel = entry.contentType.name,
                     type = entry.contentType,
-                    isSensitive = entry.isSensitive
+                    isSensitive = entry.isSensitive,
+                    mediaUri = entry.mediaUri
                 )
             },
             hideSensitivePreview = settings.hideSensitivePreview,

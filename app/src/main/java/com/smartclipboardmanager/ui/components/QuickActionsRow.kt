@@ -13,36 +13,46 @@ import androidx.compose.ui.res.stringResource
 import com.smartclipboardmanager.R
 import com.smartclipboardmanager.domain.model.ClipContentType
 import com.smartclipboardmanager.ui.theme.AppSpacing
+import java.io.File
 
 @Composable
 fun QuickActionsRow(
     content: String,
-    contentType: ClipContentType
+    contentType: ClipContentType,
+    mediaUri: String? = null
 ) {
     val context = LocalContext.current
     val trimmed = content.trim()
     val digitsOnly = trimmed.filter { it.isDigit() }
 
-    // Fallback detection keeps actions available even if stored type is temporarily stale.
     val isUrl = contentType == ClipContentType.URL ||
         (trimmed.isNotEmpty() && URL_REGEX.matches(trimmed))
     val isEmail = contentType == ClipContentType.EMAIL || EMAIL_REGEX.matches(trimmed)
     val isPhone = contentType == ClipContentType.PHONE_NUMBER ||
         (PHONE_ALLOWED_CHARS.matches(trimmed) && digitsOnly.length in 7..15)
+    val isGeo = contentType == ClipContentType.GEO_LOCATION
+    val isFile = contentType == ClipContentType.FILE
 
     Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.s)) {
         if (isUrl) {
             Button(onClick = {
+                if (trimmed.isBlank()) {
+                    Toast.makeText(context, context.getString(R.string.quick_action_error_url), Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
                 val normalized = if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
                     trimmed
                 } else {
                     "https://$trimmed"
                 }
-                launchIntent(
-                    context = context,
-                    intent = Intent(Intent.ACTION_VIEW, Uri.parse(normalized)),
-                    errorMessage = context.getString(R.string.quick_action_error_url)
-                )
+                val parsed = Uri.parse(normalized)
+                val isSupportedScheme = parsed.scheme.equals("http", ignoreCase = true) ||
+                    parsed.scheme.equals("https", ignoreCase = true)
+                if (!isSupportedScheme || parsed.host.isNullOrBlank()) {
+                    Toast.makeText(context, context.getString(R.string.quick_action_error_url), Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+                launchIntent(context, Intent(Intent.ACTION_VIEW, parsed), context.getString(R.string.quick_action_error_url))
             }) {
                 Text(stringResource(R.string.quick_action_open))
             }
@@ -52,9 +62,9 @@ fun QuickActionsRow(
             Button(onClick = {
                 val normalized = trimmed.filter { it.isDigit() || it == '+' }
                 launchIntent(
-                    context = context,
-                    intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$normalized")),
-                    errorMessage = context.getString(R.string.quick_action_error_dialer)
+                    context,
+                    Intent(Intent.ACTION_DIAL, Uri.parse("tel:$normalized")),
+                    context.getString(R.string.quick_action_error_dialer)
                 )
             }) {
                 Text(stringResource(R.string.quick_action_call))
@@ -64,12 +74,48 @@ fun QuickActionsRow(
         if (isEmail) {
             Button(onClick = {
                 launchIntent(
-                    context = context,
-                    intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$trimmed")),
-                    errorMessage = context.getString(R.string.quick_action_error_email)
+                    context,
+                    Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$trimmed")),
+                    context.getString(R.string.quick_action_error_email)
                 )
             }) {
                 Text(stringResource(R.string.quick_action_email))
+            }
+        }
+
+        if (isGeo) {
+            Button(onClick = {
+                val geoUri = Uri.parse("geo:0,0?q=${Uri.encode(trimmed)}")
+                launchIntent(
+                    context,
+                    Intent(Intent.ACTION_VIEW, geoUri),
+                    context.getString(R.string.quick_action_error_maps)
+                )
+            }) {
+                Text(stringResource(R.string.quick_action_open_maps))
+            }
+        }
+
+        if (isFile && mediaUri != null) {
+            Button(onClick = {
+                val fileUri = runCatching {
+                    androidx.core.content.FileProvider.getUriForFile(
+                        context,
+                        "${context.packageName}.fileprovider",
+                        File(mediaUri)
+                    )
+                }.getOrNull()
+                if (fileUri == null) {
+                    Toast.makeText(context, context.getString(R.string.quick_action_error_file), Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(fileUri, "*/*")
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                launchIntent(context, intent, context.getString(R.string.quick_action_error_file))
+            }) {
+                Text(stringResource(R.string.quick_action_open_file))
             }
         }
     }

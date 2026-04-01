@@ -7,12 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -26,6 +22,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smartclipboardmanager.R
+import com.smartclipboardmanager.domain.model.ClipContentType
+import com.smartclipboardmanager.ui.components.MediaCardPreview
 import com.smartclipboardmanager.ui.components.QuickActionsRow
 import com.smartclipboardmanager.ui.theme.AppSpacing
 import com.smartclipboardmanager.ui.viewmodel.HistoryItemUiModel
@@ -37,14 +35,12 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun HistoryRoute(
-    onBack: () -> Unit,
     onOpenDetail: (Long) -> Unit,
     viewModel: HistoryViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     HistoryScreen(
         uiState = uiState,
-        onBack = onBack,
         onOpenDetail = onOpenDetail,
         onQueryChange = viewModel::updateQuery
     )
@@ -54,23 +50,12 @@ fun HistoryRoute(
 @Composable
 fun HistoryScreen(
     uiState: HistoryUiState,
-    onBack: () -> Unit,
     onOpenDetail: (Long) -> Unit,
     onQueryChange: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.history_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back_action)
-                        )
-                    }
-                }
-            )
+            TopAppBar(title = { Text(stringResource(R.string.history_title)) })
         }
     ) { padding ->
         Column(
@@ -106,6 +91,11 @@ fun HistoryScreen(
 
 @Composable
 private fun HistoryRow(entry: HistoryItemUiModel, onClick: () -> Unit) {
+    val isMediaType = entry.type == ClipContentType.IMAGE ||
+        entry.type == ClipContentType.FILE ||
+        entry.type == ClipContentType.COLOR ||
+        entry.type == ClipContentType.GEO_LOCATION
+
     Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(AppSpacing.m),
@@ -113,12 +103,30 @@ private fun HistoryRow(entry: HistoryItemUiModel, onClick: () -> Unit) {
         ) {
             val pinPrefix = if (entry.isPinned) stringResource(R.string.badge_pinned) else ""
             val sensitivityPrefix = if (entry.isSensitive) stringResource(R.string.badge_sensitive) else ""
-            Text(
-                text = pinPrefix + sensitivityPrefix + entry.displayContent,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyLarge
-            )
+
+            if (isMediaType) {
+                if (pinPrefix.isNotEmpty() || sensitivityPrefix.isNotEmpty()) {
+                    Text(
+                        text = pinPrefix + sensitivityPrefix,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                MediaCardPreview(
+                    contentType = entry.type,
+                    content = entry.displayContent,
+                    mediaUri = entry.mediaUri,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                Text(
+                    text = pinPrefix + sensitivityPrefix + entry.displayContent,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
             Text(
                 text = "${entry.typeLabel} • ${entry.sourceApp ?: stringResource(R.string.unknown_source)} • ${formatTimestamp(entry.createdAtMillis)}",
                 style = MaterialTheme.typography.bodySmall
@@ -126,7 +134,8 @@ private fun HistoryRow(entry: HistoryItemUiModel, onClick: () -> Unit) {
 
             QuickActionsRow(
                 content = entry.rawContent,
-                contentType = entry.type
+                contentType = entry.type,
+                mediaUri = entry.mediaUri
             )
         }
     }

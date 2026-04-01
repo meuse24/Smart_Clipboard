@@ -1,29 +1,35 @@
 package com.smartclipboardmanager.ui.screen.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smartclipboardmanager.R
@@ -34,13 +40,15 @@ import kotlin.math.roundToInt
 
 @Composable
 fun SettingsRoute(
-    onBack: () -> Unit,
+    onNavigateHelp: () -> Unit,
+    onNavigateInfo: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     SettingsScreen(
         uiState = uiState,
-        onBack = onBack,
+        onNavigateHelp = onNavigateHelp,
+        onNavigateInfo = onNavigateInfo,
         onDarkThemeChange = viewModel::setDarkTheme,
         onPersistOtpChange = viewModel::setPersistOtpEntries,
         onHideSensitivePreviewChange = viewModel::setHideSensitivePreview,
@@ -53,7 +61,8 @@ fun SettingsRoute(
 @Composable
 fun SettingsScreen(
     uiState: SettingsUiState,
-    onBack: () -> Unit,
+    onNavigateHelp: () -> Unit,
+    onNavigateInfo: () -> Unit,
     onDarkThemeChange: (Boolean) -> Unit,
     onPersistOtpChange: (Boolean) -> Unit,
     onHideSensitivePreviewChange: (Boolean) -> Unit,
@@ -62,17 +71,7 @@ fun SettingsScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back_action)
-                        )
-                    }
-                }
-            )
+            TopAppBar(title = { Text(stringResource(R.string.settings_title)) })
         }
     ) { padding ->
         Column(
@@ -144,6 +143,26 @@ fun SettingsScreen(
                     )
                 }
             }
+
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(verticalArrangement = Arrangement.spacedBy(AppSpacing.xs)) {
+                    Text(
+                        stringResource(R.string.section_about),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = AppSpacing.m, vertical = AppSpacing.m)
+                    )
+                    NavRow(
+                        label = stringResource(R.string.help_title),
+                        icon = { Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = null) },
+                        onClick = onNavigateHelp
+                    )
+                    NavRow(
+                        label = stringResource(R.string.info_title),
+                        icon = { Icon(Icons.Filled.Info, contentDescription = null) },
+                        onClick = onNavigateInfo
+                    )
+                }
+            }
         }
     }
 }
@@ -156,9 +175,43 @@ private fun ToggleRow(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.spacedBy(AppSpacing.m),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, style = MaterialTheme.typography.bodyLarge)
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f)
+        )
+        Box(modifier = Modifier.widthIn(min = 52.dp), contentAlignment = Alignment.CenterEnd) {
+            Switch(checked = checked, onCheckedChange = onCheckedChange)
+        }
+    }
+}
+
+@Composable
+private fun NavRow(
+    label: String,
+    icon: @Composable () -> Unit,
+    onClick: () -> Unit
+) {
+    Surface(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.padding(horizontal = AppSpacing.m, vertical = AppSpacing.m),
+            horizontalArrangement = Arrangement.spacedBy(AppSpacing.m),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            icon()
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f)
+            )
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }

@@ -16,8 +16,10 @@ interface ClipboardRepository {
         sourceApp: String?,
         capturedAtMillis: Long,
         contentType: ClipContentType,
-        isSensitive: Boolean
+        isSensitive: Boolean,
+        mediaUri: String? = null
     )
-    suspend fun deleteOlderThan(thresholdMillis: Long)
+    /** Deletes entries older than [thresholdMillis] and returns the mediaUri of each deleted entry. */
+    suspend fun deleteOlderThan(thresholdMillis: Long): List<String>
     suspend fun seedDemoDataIfEmpty()
 }
