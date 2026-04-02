@@ -10,17 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.HelpOutline
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -40,15 +34,11 @@ import kotlin.math.roundToInt
 
 @Composable
 fun SettingsRoute(
-    onNavigateHelp: () -> Unit,
-    onNavigateInfo: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     SettingsScreen(
         uiState = uiState,
-        onNavigateHelp = onNavigateHelp,
-        onNavigateInfo = onNavigateInfo,
         onDarkThemeChange = viewModel::setDarkTheme,
         onPersistOtpChange = viewModel::setPersistOtpEntries,
         onHideSensitivePreviewChange = viewModel::setHideSensitivePreview,
@@ -61,8 +51,6 @@ fun SettingsRoute(
 @Composable
 fun SettingsScreen(
     uiState: SettingsUiState,
-    onNavigateHelp: () -> Unit,
-    onNavigateInfo: () -> Unit,
     onDarkThemeChange: (Boolean) -> Unit,
     onPersistOtpChange: (Boolean) -> Unit,
     onHideSensitivePreviewChange: (Boolean) -> Unit,
@@ -143,26 +131,6 @@ fun SettingsScreen(
                     )
                 }
             }
-
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(verticalArrangement = Arrangement.spacedBy(AppSpacing.xs)) {
-                    Text(
-                        stringResource(R.string.section_about),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(horizontal = AppSpacing.m, vertical = AppSpacing.m)
-                    )
-                    NavRow(
-                        label = stringResource(R.string.help_title),
-                        icon = { Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = null) },
-                        onClick = onNavigateHelp
-                    )
-                    NavRow(
-                        label = stringResource(R.string.info_title),
-                        icon = { Icon(Icons.Filled.Info, contentDescription = null) },
-                        onClick = onNavigateInfo
-                    )
-                }
-            }
         }
     }
 }
@@ -185,33 +153,6 @@ private fun ToggleRow(
         )
         Box(modifier = Modifier.widthIn(min = 52.dp), contentAlignment = Alignment.CenterEnd) {
             Switch(checked = checked, onCheckedChange = onCheckedChange)
-        }
-    }
-}
-
-@Composable
-private fun NavRow(
-    label: String,
-    icon: @Composable () -> Unit,
-    onClick: () -> Unit
-) {
-    Surface(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.padding(horizontal = AppSpacing.m, vertical = AppSpacing.m),
-            horizontalArrangement = Arrangement.spacedBy(AppSpacing.m),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            icon()
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f)
-            )
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
     }
 }

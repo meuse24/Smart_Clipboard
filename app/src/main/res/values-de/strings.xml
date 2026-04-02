@@ -3,6 +3,7 @@
 
     <string name="home_title">M24 Smart Clipboard</string>
     <string name="nav_home">Start</string>
+    <string name="nav_settings">Setup</string>
     <string name="history_title">Verlauf</string>
     <string name="detail_title">Details</string>
     <string name="settings_title">Einstellungen</string>

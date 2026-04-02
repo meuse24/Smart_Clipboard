@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.ContentPaste
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -59,6 +60,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun HomeRoute(
     onOpenDetail: (Long) -> Unit,
+    onOpenInfo: () -> Unit,
     onImportClipboardRequest: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -66,6 +68,7 @@ fun HomeRoute(
     HomeScreen(
         uiState = uiState,
         onOpenDetail = onOpenDetail,
+        onOpenInfo = onOpenInfo,
         onImportClipboardRequest = onImportClipboardRequest
     )
 }
@@ -75,11 +78,22 @@ fun HomeRoute(
 fun HomeScreen(
     uiState: HomeUiState,
     onOpenDetail: (Long) -> Unit,
+    onOpenInfo: () -> Unit,
     onImportClipboardRequest: () -> Unit
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { AppBarTitle() })
+            TopAppBar(
+                title = { AppBarTitle() },
+                actions = {
+                    IconButton(onClick = onOpenInfo) {
+                        Icon(
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = stringResource(R.string.info_title)
+                        )
+                    }
+                }
+            )
         }
     ) { padding ->
         LazyColumn(

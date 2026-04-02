@@ -2,6 +2,7 @@ package com.smartclipboardmanager.ui.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
@@ -74,7 +75,7 @@ fun AppNavHost(
                     )
                     NavigationBarItem(
                         icon = { Icon(Icons.Filled.Settings, contentDescription = null) },
-                        label = { Text(stringResource(R.string.settings_title)) },
+                        label = { Text(stringResource(R.string.nav_settings)) },
                         selected = currentRoute == AppDestination.Settings.route,
                         onClick = {
                             navController.navigate(AppDestination.Settings.route) {
@@ -83,6 +84,12 @@ fun AppNavHost(
                                 restoreState = true
                             }
                         }
+                    )
+                    NavigationBarItem(
+                        icon = { Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = null) },
+                        label = { Text(stringResource(R.string.help_title)) },
+                        selected = currentRoute == AppDestination.Help.route,
+                        onClick = { navController.navigate(AppDestination.Help.route) }
                     )
                 }
             }
@@ -97,6 +104,7 @@ fun AppNavHost(
                 HomeRoute(
                     viewModel = homeViewModel,
                     onOpenDetail = { id -> navController.navigate(AppDestination.Detail.createRoute(id)) },
+                    onOpenInfo = { navController.navigate(AppDestination.Info.route) },
                     onImportClipboardRequest = onImportClipboardRequest
                 )
             }
@@ -108,10 +116,7 @@ fun AppNavHost(
             }
 
             composable(route = AppDestination.Settings.route) {
-                SettingsRoute(
-                    onNavigateHelp = { navController.navigate(AppDestination.Help.route) },
-                    onNavigateInfo = { navController.navigate(AppDestination.Info.route) }
-                )
+                SettingsRoute()
             }
 
             composable(route = AppDestination.Help.route) {
